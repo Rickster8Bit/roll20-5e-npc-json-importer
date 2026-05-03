@@ -57,6 +57,18 @@
   ],
   "spellcasting_ability": "Intelligence",
   "caster_level": 18,
+  "spells": {
+    "cantrips": ["mage hand", "prestidigitation", "ray of frost"],
+    "1": ["detect magic", "magic missile", "shield", "thunderwave"],
+    "2": ["detect thoughts", "invisibility", "Melf's acid arrow", "mirror image"],
+    "3": ["animate dead", "counterspell", "dispel magic", "fireball"],
+    "4": ["blight", "dimension door"],
+    "5": ["cloudkill", "scrying"],
+    "6": ["disintegrate", "globe of invulnerability"],
+    "7": ["finger of death", "plane shift"],
+    "8": ["dominate monster", "power word stun"],
+    "9": ["power word kill"]
+  },
   "spell_slots": {
     "1": 4,
     "2": 3,

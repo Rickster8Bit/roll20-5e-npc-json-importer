@@ -1,0 +1,153 @@
+{
+  "name": "Bigby, the Grasping Hand Eternal",
+  "size": "Medium",
+  "type": "undead (vampire)",
+  "alignment": "lawful evil",
+  "ac": {
+    "value": 18,
+    "notes": "mage armor"
+  },
+  "hp": {
+    "average": 210,
+    "formula": "20d8 + 120"
+  },
+  "speed": "30 ft., climb 30 ft.",
+  "abilities": {
+    "str": 10,
+    "dex": 16,
+    "con": 22,
+    "int": 20,
+    "wis": 16,
+    "cha": 18
+  },
+  "saves": {
+    "con": "+12",
+    "int": "+11",
+    "wis": "+9"
+  },
+  "skills": {
+    "arcana": "+17",
+    "insight": "+9",
+    "perception": "+9"
+  },
+  "damage_resistances": "necrotic; bludgeoning, piercing, and slashing from nonmagical attacks",
+  "damage_immunities": "poison",
+  "condition_immunities": "poisoned",
+  "senses": "darkvision 120 ft., passive Perception 19",
+  "languages": "Common, Elvish, Draconic, telepathy 120 ft.",
+  "cr": "17",
+  "pb": "+6",
+  "spellcasting_ability": "Intelligence",
+  "caster_level": 20,
+  "spell_slots": {
+    "1": 4,
+    "2": 3,
+    "3": 3,
+    "4": 3,
+    "5": 3,
+    "6": 2,
+    "7": 2,
+    "8": 1,
+    "9": 1
+  },
+  "spells": {
+    "cantrips": ["chill touch", "mage hand", "minor illusion"],
+    "1": ["mage armor", "shield"],
+    "2": ["mirror image", "misty step"],
+    "3": ["counterspell"],
+    "4": ["blight", "greater invisibility"],
+    "5": ["wall of force"],
+    "6": ["disintegrate"],
+    "7": ["finger of death"],
+    "8": ["dominate monster"],
+    "9": ["power word kill"]
+  },
+  "traits": [
+    {
+      "name": "Regeneration",
+      "desc": "Bigby regains 20 hit points at the start of his turn if he has at least 1 hit point and hasn't taken radiant damage since the end of his last turn."
+    },
+    {
+      "name": "Legendary Resistance (2/Day)",
+      "desc": "If Bigby fails a saving throw, he can choose to succeed instead."
+    },
+    {
+      "name": "Spider Climb",
+      "desc": "Bigby can climb difficult surfaces, including upside down on ceilings, without needing to make an ability check."
+    },
+    {
+      "name": "Misty Escape",
+      "desc": "When reduced to 0 hit points outside his resting place, Bigby transforms into a cloud of mist instead of falling unconscious."
+    },
+    {
+      "name": "Spellcasting",
+      "desc": "Bigby is a 20th-level spellcaster. His spellcasting ability is Intelligence (spell save DC 19, +11 to hit with spell attacks). Bigby has the following wizard spells prepared:\n\nCantrips (at will): chill touch, mage hand, minor illusion\n1st level (4 slots): mage armor, shield\n2nd level (3 slots): mirror image, misty step\n3rd level (3 slots): counterspell\n4th level (3 slots): blight, greater invisibility\n5th level (3 slots): wall of force\n6th level (2 slots): disintegrate\n7th level (2 slots): finger of death\n8th level (1 slot): dominate monster\n9th level (1 slot): power word kill"
+    }
+  ],
+  "actions": [
+    {
+      "name": "Multiattack",
+      "desc": "Bigby makes one Necrotic Hand attack and casts one spell."
+    },
+    {
+      "name": "Necrotic Hand",
+      "attack": {
+        "type": "Melee Spell",
+        "tohit": "+9",
+        "reach": "5 ft.",
+        "target": "one target",
+        "dmg1": "3d8",
+        "type1": "necrotic"
+      },
+      "desc": "Melee Spell Attack: +9 to hit, reach 5 ft., one target. Hit: 13 (3d8) necrotic damage. Bigby regains hit points equal to the necrotic damage dealt."
+    },
+    {
+      "name": "Bite",
+      "attack": {
+        "type": "Melee Weapon",
+        "tohit": "+9",
+        "reach": "5 ft.",
+        "target": "one grappled creature",
+        "dmg1": "4d6",
+        "type1": "necrotic"
+      },
+      "desc": "Melee Weapon Attack: +9 to hit, reach 5 ft., one grappled creature. Hit: 14 (4d6) necrotic damage, and the target's hit point maximum is reduced by an amount equal to the necrotic damage taken."
+    },
+    {
+      "name": "Profane Hand (Recharge 5-6)",
+      "desc": "Bigby summons or commands a massive shadowy hand. Choose one effect: Crushing Grip: +11 to hit, 4d8 + 5 necrotic damage, and the target is grappled and restrained. Grasping Slam: Each creature in a 20-foot-radius area must make a DC 19 Dexterity saving throw, taking 4d8 necrotic damage and falling prone on a failure. Force Interposition: The hand grants Bigby +5 AC until the start of his next turn. Areas affected by the hand become difficult terrain. A creature that enters one of these areas or starts its turn there must succeed on a DC 17 Strength saving throw or be restrained until the end of its turn."
+    },
+    {
+      "name": "Fade into Nothing",
+      "desc": "While invisible, Bigby teleports up to 30 feet to an unoccupied space he can see."
+    }
+  ],
+  "reactions": [
+    {
+      "name": "Arcane Denial",
+      "desc": "Bigby casts counterspell or imposes disadvantage on a spell attack made against him."
+    }
+  ],
+  "legendary": {
+    "count": 3,
+    "actions": [
+      {
+        "name": "Cantrip",
+        "desc": "Bigby casts chill touch."
+      },
+      {
+        "name": "Shadow Shift",
+        "desc": "Bigby teleports up to 30 feet."
+      },
+      {
+        "name": "Hand Attack",
+        "desc": "Bigby commands his Profane Hand to make an attack."
+      },
+      {
+        "name": "Spell Surge (Costs 2 Actions)",
+        "cost": 2,
+        "desc": "Bigby casts a spell of 3rd level or lower."
+      }
+    ]
+  }
+}

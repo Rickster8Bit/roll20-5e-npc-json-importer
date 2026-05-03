@@ -108,27 +108,23 @@ const ImportNpcJson_Builder = {
                 };
                 ImportNpcJson_RepeatingSections.processAll(char.id, d, repeatingSectionUtils);
 
-                // Lair actions and spellcasting warnings (as per original script)
-                if (d.lair_actions && (!d.legendary || !d.legendary.lair_actions_desc)) { // Adjusted condition slightly if lair actions are processed elsewhere
-                    // The original check was `if (d.lair_actions)` which is broad.
-                    // If lair actions are only simple descriptions now, this might be okay.
-                    // If they are meant to be complex repeating sections, this warning is still valid.
-                    // For now, keeping similar to original simple check.
-                    // The original script had: `if (d.lair_actions) { w("⚠️ Lair action import not implemented."); }`
-                    // And `if (d.lair_actions && d.lair_actions.desc !== undefined)` for npc_lair_actions scalar attribute.
-                    // Current repeating section only handles `d.legendary.actions`, not `d.lair_actions` items.
-                    // Check if `d.lair_actions` exists and is not just a simple description already handled by ScalarAttributes
-                    if(typeof d.lair_actions === 'object' && d.lair_actions.name && d.lair_actions.desc && d.lair_actions.actions) {
-                         w("⚠️ Complex Lair action (with sub-actions) import not fully implemented in repeating sections. Description may be set.");
-                    } else if (typeof d.lair_actions === 'string') { 
-                        // This case might be if npc_lair_actions was set but it was a simple string.
-                        // No warning needed as it would have been handled by ScalarAttributes.
-                    } else if (d.lair_actions) {
-                         w("⚠️ Lair action data present, ensure it was processed as expected (description and/or repeating section).");
+                // Lair actions warning
+                if (d.lair_actions) {
+                    if (typeof d.lair_actions === 'object' && d.lair_actions.name && d.lair_actions.desc && d.lair_actions.actions) {
+                        w("⚠️ Complex Lair action (with sub-actions) import not fully implemented in repeating sections. Description may be set.");
+                    } else if (d.lair_actions && typeof d.lair_actions !== 'string') {
+                        w("⚠️ Lair action data present, ensure it was processed as expected (description and/or repeating section).");
                     }
                 }
-                if (d.spellcasting) {
-                    w("⚠️ Spell import not yet implemented.");
+
+                // Spell import: fires asynchronously after the rest of the NPC is built
+                const hasStructuredSpells = d.spells && typeof d.spells === 'object';
+                const traitHasSpellList = (d.traits || []).some(t =>
+                    t.name && t.name.toLowerCase().includes('spellcasting') &&
+                    t.desc && /\b(?:cantrip|[1-9](?:st|nd|rd|th)\s*level)/i.test(t.desc)
+                );
+                if (hasStructuredSpells || traitHasSpellList) {
+                    ImportNpcJson_SpellImporter.importSpellsForCharacter(char.id, d, w);
                 }
 
                 // Output CR Benchmark Stats to GM
@@ -168,7 +164,7 @@ const ImportNpcJson_Builder = {
                 }
 
                 w(
-                    `✅ Successfully imported <b>${d.name}</b> (ID: ${char.id}) in ${duration}ms. Check attacks/options. Add Lair/Spells manually. (v${scriptVersion})`,
+                    `✅ Successfully imported <b>${d.name}</b> (ID: ${char.id}) in ${duration}ms. Check attacks/options. Add Lair actions manually if needed. (v${scriptVersion})`,
                 );
             }, 1000); // Original timeout duration
         } catch (e) {

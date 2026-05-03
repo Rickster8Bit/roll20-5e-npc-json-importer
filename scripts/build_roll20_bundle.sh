@@ -31,6 +31,7 @@ FILES=(
   "$MODULE_SUBDIR/ImportNpcJson_ScalarAttributes.js"
   "$MODULE_SUBDIR/ImportNpcJson_SheetInitializer.js"
   "$MODULE_SUBDIR/ImportNpcJson_RepeatingSections.js"
+  "$MODULE_SUBDIR/ImportNpcJson_SpellImporter.js"
   "$MODULE_SUBDIR/ImportNpcJson_Builder.js"
   "$MODULE_SUBDIR/ImportNpcJson_Core.js"
 )

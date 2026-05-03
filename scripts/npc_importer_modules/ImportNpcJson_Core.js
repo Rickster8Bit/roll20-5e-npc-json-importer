@@ -32,7 +32,7 @@ const ImportNpcJson = (() => { // START REVEALING MODULE PATTERN
     function handleChatMessage(msg) {
         if (msg.playerid === 'API') return;                 // Prevent self-echo loops
         
-        // Modified check to allow both !5enpcimport and !5enpctest
+        // Allow !5enpcimport (and variants) plus !5enpctest
         if (msg.type !== 'api' || (!msg.content.startsWith('!5enpcimport') && !msg.content.startsWith('!5enpctest'))) return;
     
         const who = msg.who.replace(' (GM)', '');
@@ -96,6 +96,25 @@ const ImportNpcJson = (() => { // START REVEALING MODULE PATTERN
             if (ImportNpcJson_HelpCommand.handleHelp(msg, whisper)) {
                 return;
             }
+        }
+
+        // !5enpcimport spells  — retro-fit spells onto already-imported NPC tokens
+        if (msg.content.trim() === '!5enpcimport spells') {
+            if (!msg.selected || msg.selected.length === 0) {
+                return whisper('❌ Select one or more NPC tokens and run `!5enpcimport spells` to add their spells.');
+            }
+            msg.selected.forEach(sel => {
+                if (sel._type !== 'graphic') return;
+                const token = ImportJSON_Utils.global_getObj('graphic', sel._id);
+                if (!token) return;
+                const charId = token.get('represents');
+                if (!charId) {
+                    return whisper(`⚠️ Token "${token.get('name')}" is not linked to a character.`);
+                }
+                whisper(`🔮 Adding spells to <b>${token.get('name')}</b>…`);
+                ImportNpcJson_SpellImporter.importSpellsForExistingCharacter(charId, whisper);
+            });
+            return;
         }
 
         // Inline JSON (quoted or bare)
