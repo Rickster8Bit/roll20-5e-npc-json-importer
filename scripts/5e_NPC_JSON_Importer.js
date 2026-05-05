@@ -1,4 +1,4 @@
-// 5e NPC JSON Importer - Generated Mon May  4 18:13:45 PDT 2026
+// 5e NPC JSON Importer - Generated Mon May  4 18:20:03 PDT 2026
 // Main script file. Contains all necessary modules.
 // Load Order:
 (() => { // Start of IIFE wrapper for the entire bundle
@@ -1318,47 +1318,41 @@ const ImportNpcJson_SpellImporter = {
 
     // Fetches spell data from dnd5eapi.co, using CACHE to avoid duplicate requests.
     // Returns the parsed JSON on success, or null on any error / 404.
-    // Roll20 API sandbox uses Node.js https.request — fetch() is not available.
+    // Roll20 API sandbox provides XMLHttpRequest but not fetch() or require().
     fetchSpell: function(slug) {
         if (ImportNpcJson_SpellImporter.CACHE[slug] !== undefined) {
             return Promise.resolve(ImportNpcJson_SpellImporter.CACHE[slug]);
         }
         return new Promise(function(resolve) {
             try {
-                const https = require('https');
-                const options = {
-                    hostname: 'www.dnd5eapi.co',
-                    path: '/api/spells/' + slug,
-                    method: 'GET',
-                    headers: { 'Accept': 'application/json' }
-                };
-                const req = https.request(options, function(res) {
-                    if (res.statusCode !== 200) {
-                        ImportNpcJson_SpellImporter.CACHE[slug] = null;
-                        resolve(null);
-                        return;
-                    }
-                    let body = '';
-                    res.on('data', function(chunk) { body += chunk; });
-                    res.on('end', function() {
+                const xhr = new XMLHttpRequest();
+                const url = 'https://www.dnd5eapi.co/api/spells/' + slug;
+                xhr.open('GET', url, true);
+                xhr.setRequestHeader('Accept', 'application/json');
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState !== 4) return;
+                    if (xhr.status === 200) {
                         try {
-                            const data = JSON.parse(body);
+                            const data = JSON.parse(xhr.responseText);
                             ImportNpcJson_SpellImporter.CACHE[slug] = data;
                             resolve(data);
                         } catch(e) {
                             ImportNpcJson_SpellImporter.CACHE[slug] = null;
                             resolve(null);
                         }
-                    });
-                });
-                req.on('error', function(err) {
-                    ImportJSON_Utils.dbg('SpellImporter fetchSpell "' + slug + '": ' + err.message);
+                    } else {
+                        ImportNpcJson_SpellImporter.CACHE[slug] = null;
+                        resolve(null);
+                    }
+                };
+                xhr.onerror = function() {
+                    ImportJSON_Utils.dbg('SpellImporter fetchSpell XHR error: ' + slug);
                     ImportNpcJson_SpellImporter.CACHE[slug] = null;
                     resolve(null);
-                });
-                req.end();
+                };
+                xhr.send();
             } catch(e) {
-                ImportJSON_Utils.dbg('SpellImporter fetchSpell require error: ' + e.message);
+                ImportJSON_Utils.dbg('SpellImporter fetchSpell error: ' + e.message);
                 ImportNpcJson_SpellImporter.CACHE[slug] = null;
                 resolve(null);
             }
