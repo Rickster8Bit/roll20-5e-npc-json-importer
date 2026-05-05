@@ -1,4 +1,4 @@
-// 5e NPC JSON Importer - Generated Sat May  2 21:09:04 PDT 2026
+// 5e NPC JSON Importer - Generated Mon May  4 18:13:45 PDT 2026
 // Main script file. Contains all necessary modules.
 // Load Order:
 (() => { // Start of IIFE wrapper for the entire bundle
@@ -1318,25 +1318,51 @@ const ImportNpcJson_SpellImporter = {
 
     // Fetches spell data from dnd5eapi.co, using CACHE to avoid duplicate requests.
     // Returns the parsed JSON on success, or null on any error / 404.
+    // Roll20 API sandbox uses Node.js https.request — fetch() is not available.
     fetchSpell: function(slug) {
         if (ImportNpcJson_SpellImporter.CACHE[slug] !== undefined) {
             return Promise.resolve(ImportNpcJson_SpellImporter.CACHE[slug]);
         }
-        const url = `https://www.dnd5eapi.co/api/spells/${slug}`;
-        return fetch(url)
-            .then(resp => {
-                if (!resp.ok) return null;
-                return resp.json();
-            })
-            .then(data => {
-                ImportNpcJson_SpellImporter.CACHE[slug] = data;
-                return data;
-            })
-            .catch(err => {
-                ImportJSON_Utils.dbg(`SpellImporter fetchSpell "${slug}": ${err.message}`);
+        return new Promise(function(resolve) {
+            try {
+                const https = require('https');
+                const options = {
+                    hostname: 'www.dnd5eapi.co',
+                    path: '/api/spells/' + slug,
+                    method: 'GET',
+                    headers: { 'Accept': 'application/json' }
+                };
+                const req = https.request(options, function(res) {
+                    if (res.statusCode !== 200) {
+                        ImportNpcJson_SpellImporter.CACHE[slug] = null;
+                        resolve(null);
+                        return;
+                    }
+                    let body = '';
+                    res.on('data', function(chunk) { body += chunk; });
+                    res.on('end', function() {
+                        try {
+                            const data = JSON.parse(body);
+                            ImportNpcJson_SpellImporter.CACHE[slug] = data;
+                            resolve(data);
+                        } catch(e) {
+                            ImportNpcJson_SpellImporter.CACHE[slug] = null;
+                            resolve(null);
+                        }
+                    });
+                });
+                req.on('error', function(err) {
+                    ImportJSON_Utils.dbg('SpellImporter fetchSpell "' + slug + '": ' + err.message);
+                    ImportNpcJson_SpellImporter.CACHE[slug] = null;
+                    resolve(null);
+                });
+                req.end();
+            } catch(e) {
+                ImportJSON_Utils.dbg('SpellImporter fetchSpell require error: ' + e.message);
                 ImportNpcJson_SpellImporter.CACHE[slug] = null;
-                return null;
-            });
+                resolve(null);
+            }
+        });
     },
 
     // Returns true if a spell with this name already exists in the character's spellbook.
